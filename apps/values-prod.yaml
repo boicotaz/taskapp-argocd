@@ -1,0 +1,4 @@
+env: prod
+
+database:
+  secretPath: taskapp/prod/database

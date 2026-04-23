@@ -1,0 +1,6 @@
+repoURL: "https://github.com/boicotaz/taskapp-helmcharts.git"
+targetRevision: main
+
+notifications:
+  slack:
+    channel: deployments
