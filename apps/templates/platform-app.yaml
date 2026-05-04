@@ -17,6 +17,8 @@ spec:
       values: |
         prometheusRules:
           enabled: true
+        grafanaDashboard:
+          enabled: true
   destination:
     server: "https://kubernetes.default.svc"
     namespace: default
