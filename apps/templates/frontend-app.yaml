@@ -16,6 +16,7 @@ spec:
   destination:
     server: "https://kubernetes.default.svc"
     namespace: default
+  {{- include "taskapp.ignoreDifferences" (dict "kind" "Deployment") | nindent 2 }}
   syncPolicy:
     automated:
       prune: true
