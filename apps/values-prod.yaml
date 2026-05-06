@@ -4,4 +4,5 @@ database:
   secretPath: taskapp/prod/database
 
 backend:
+  awsCredentialsEnabled: true
   awsCredentialsSecretPath: taskapp/prod/backend-credentials

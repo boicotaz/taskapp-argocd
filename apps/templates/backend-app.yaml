@@ -16,6 +16,8 @@ spec:
     path: backend
     helm:
       parameters:
+        - name: awsCredentials.enabled
+          value: {{ .Values.backend.awsCredentialsEnabled | quote }}
         - name: awsCredentials.secretPath
           value: {{ .Values.backend.awsCredentialsSecretPath | quote }}
   destination:
