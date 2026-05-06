@@ -2,3 +2,6 @@ env: dev
 
 database:
   secretPath: taskapp/dev/database
+
+backend:
+  awsCredentialsSecretPath: taskapp/dev/backend-credentials

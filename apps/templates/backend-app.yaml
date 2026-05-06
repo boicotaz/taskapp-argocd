@@ -14,6 +14,10 @@ spec:
     repoURL: {{ .Values.repoURL | quote }}
     targetRevision: {{ .Values.targetRevision | quote }}
     path: backend
+    helm:
+      parameters:
+        - name: awsCredentials.secretPath
+          value: {{ .Values.backend.awsCredentialsSecretPath | quote }}
   destination:
     server: "https://kubernetes.default.svc"
     namespace: default

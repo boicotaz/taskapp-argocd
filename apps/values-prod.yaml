@@ -2,3 +2,6 @@ env: prod
 
 database:
   secretPath: taskapp/prod/database
+
+backend:
+  awsCredentialsSecretPath: taskapp/prod/backend-credentials
