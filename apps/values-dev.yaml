@@ -6,3 +6,6 @@ database:
 backend:
   awsCredentialsEnabled: true
   awsCredentialsSecretPath: taskapp/dev/backend-credentials
+  sqsEnabled: false
+  sqsQueueUrl: ""
+  sqsRegion: eu-west-1
