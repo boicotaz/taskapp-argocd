@@ -26,6 +26,8 @@ spec:
           value: {{ .Values.backend.sqsQueueUrl | quote }}
         - name: sqs.region
           value: {{ .Values.backend.sqsRegion | quote }}
+        - name: keda.enabled
+          value: {{ .Values.backend.kedaEnabled | quote }}
   destination:
     server: "https://kubernetes.default.svc"
     namespace: default

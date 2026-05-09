@@ -9,3 +9,4 @@ backend:
   sqsEnabled: false
   sqsQueueUrl: ""
   sqsRegion: eu-west-1
+  kedaEnabled: false
