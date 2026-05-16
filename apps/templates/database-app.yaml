@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: taskapp-database
+  name: taskapp-database-{{ .Values.env }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "2"
@@ -18,7 +18,7 @@ spec:
         - name: externalSecrets.secretPath
           value: {{ .Values.database.secretPath | quote }}
   destination:
-    server: "https://kubernetes.default.svc"
+    server: {{ .Values.destinationServer | quote }}
     namespace: default
   {{- include "taskapp.ignoreDifferences" (dict "kind" "StatefulSet") | nindent 2 }}
   syncPolicy:

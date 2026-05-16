@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: keda
+  name: keda-{{ .Values.env }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -12,7 +12,7 @@ spec:
     chart: keda
     targetRevision: "2.16.1"
   destination:
-    server: "https://kubernetes.default.svc"
+    server: {{ .Values.destinationServer | quote }}
     namespace: keda
   syncPolicy:
     automated:

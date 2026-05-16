@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: taskapp-platform
+  name: taskapp-platform-{{ .Values.env }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -20,7 +20,7 @@ spec:
         grafanaDashboard:
           enabled: true
   destination:
-    server: "https://kubernetes.default.svc"
+    server: {{ .Values.destinationServer | quote }}
     namespace: default
   syncPolicy:
     automated:

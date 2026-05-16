@@ -1,5 +1,7 @@
 env: prod
 
+destinationServer: "https://192.168.58.2:8443"
+
 database:
   secretPath: taskapp/prod/database
 

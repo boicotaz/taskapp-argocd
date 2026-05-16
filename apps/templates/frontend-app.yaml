@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: taskapp-frontend
+  name: taskapp-frontend-{{ .Values.env }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "2"
@@ -14,7 +14,7 @@ spec:
     targetRevision: {{ .Values.targetRevision | quote }}
     path: frontend
   destination:
-    server: "https://kubernetes.default.svc"
+    server: {{ .Values.destinationServer | quote }}
     namespace: default
   {{- include "taskapp.ignoreDifferences" (dict "kind" "Deployment") | nindent 2 }}
   syncPolicy:

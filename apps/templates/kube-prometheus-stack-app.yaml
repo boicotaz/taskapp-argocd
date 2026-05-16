@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kube-prometheus-stack
+  name: kube-prometheus-stack-{{ .Values.env }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -24,7 +24,7 @@ spec:
             kubeSchedulerRecording: false
             windows: false
   destination:
-    server: "https://kubernetes.default.svc"
+    server: {{ .Values.destinationServer | quote }}
     namespace: monitoring
   syncPolicy:
     automated:
