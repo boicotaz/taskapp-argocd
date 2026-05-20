@@ -15,6 +15,7 @@ spec:
     targetRevision: {{ .Values.targetRevision | quote }}
     path: backend
     helm:
+      releaseName: taskapp-backend
       parameters:
         - name: awsCredentials.enabled
           value: {{ .Values.backend.awsCredentialsEnabled | quote }}

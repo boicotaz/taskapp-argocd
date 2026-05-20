@@ -13,6 +13,8 @@ spec:
     repoURL: {{ .Values.repoURL | quote }}
     targetRevision: {{ .Values.targetRevision | quote }}
     path: frontend
+    helm:
+      releaseName: taskapp-frontend
   destination:
     server: {{ .Values.destinationServer | quote }}
     namespace: default

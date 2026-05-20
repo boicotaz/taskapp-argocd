@@ -14,6 +14,7 @@ spec:
     targetRevision: {{ .Values.targetRevision | quote }}
     path: database
     helm:
+      releaseName: taskapp-database
       parameters:
         - name: externalSecrets.secretPath
           value: {{ .Values.database.secretPath | quote }}
