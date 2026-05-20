@@ -14,6 +14,7 @@ spec:
     targetRevision: {{ .Values.targetRevision | quote }}
     path: platform
     helm:
+      releaseName: taskapp-platform
       values: |
         prometheusRules:
           enabled: true

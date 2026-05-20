@@ -11,6 +11,8 @@ spec:
     repoURL: "https://kedacore.github.io/charts"
     chart: keda
     targetRevision: "2.16.1"
+    helm:
+      releaseName: keda
   destination:
     server: {{ .Values.destinationServer | quote }}
     namespace: keda

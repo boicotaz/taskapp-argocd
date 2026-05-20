@@ -12,6 +12,7 @@ spec:
     chart: kube-prometheus-stack
     targetRevision: "84.4.0"
     helm:
+      releaseName: kube-prometheus-stack
       values: |
         crds:
           enabled: true
