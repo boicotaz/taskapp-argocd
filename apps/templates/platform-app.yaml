@@ -20,6 +20,9 @@ spec:
           enabled: true
         grafanaDashboard:
           enabled: true
+      parameters:
+        - name: externalSecrets.secretPath
+          value: {{ .Values.database.secretPath | quote }}
   destination:
     server: {{ .Values.destinationServer | quote }}
     namespace: default
