@@ -23,6 +23,8 @@ spec:
       parameters:
         - name: externalSecrets.secretPath
           value: {{ .Values.database.secretPath | quote }}
+        - name: awsCredentials.secretPath
+          value: {{ .Values.backend.awsCredentialsSecretPath | quote }}
   destination:
     server: {{ .Values.destinationServer | quote }}
     namespace: default

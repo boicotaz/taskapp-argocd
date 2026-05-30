@@ -19,8 +19,6 @@ spec:
       parameters:
         - name: awsCredentials.enabled
           value: {{ .Values.backend.awsCredentialsEnabled | quote }}
-        - name: awsCredentials.secretPath
-          value: {{ .Values.backend.awsCredentialsSecretPath | quote }}
         - name: sqs.enabled
           value: {{ .Values.backend.sqsEnabled | quote }}
         - name: sqs.queueUrl
