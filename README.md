@@ -1,12 +1,8 @@
 # taskapp-argocd
 
-GitOps configuration for deploying the taskapp stack to Kubernetes using ArgoCD.
+GitOps configuration for deploying the taskapp stack to Kubernetes using ArgoCD. Implements the [App-of-Apps](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/) pattern with a centralized ArgoCD instance on a dedicated management cluster managing both dev and prod.
 
-## Overview
-
-This repository implements the [App-of-Apps](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/) pattern. A single root `Application` points ArgoCD at a Helm chart (`apps/`) that bootstraps all child applications. Environment-specific configuration is handled via separate Helm value files for `dev` and `prod`.
-
-Helm charts for the individual components live in the companion repo: [`taskapp-helmcharts`](https://github.com/boicotaz/taskapp-helmcharts).
+Helm charts for all components live in the companion repo: [`taskapp-helmcharts`](https://github.com/boicotaz/taskapp-helmcharts).
 
 ## Repository Structure
 
@@ -15,55 +11,59 @@ taskapp-argocd/
 ├── root-dev.yaml               # Root ArgoCD Application for dev
 ├── root-prod.yaml              # Root ArgoCD Application for prod
 └── apps/
-    ├── Chart.yaml              # Helm chart metadata
-    ├── values.yaml             # Shared default values
+    ├── Chart.yaml
+    ├── values.yaml             # Shared defaults (repoURL, targetRevision)
     ├── values-dev.yaml         # Dev environment overrides
     ├── values-prod.yaml        # Prod environment overrides
     └── templates/
-        ├── external-secrets-app.yaml         # External Secrets Operator (sync wave 0)
-        ├── external-secrets-config-app.yaml  # ESO ClusterSecretStore / config (sync wave 1)
-        ├── database-app.yaml                 # Database (sync wave 2)
-        ├── backend-app.yaml                  # Backend service (sync wave 2)
-        └── frontend-app.yaml                 # Frontend service (sync wave 2)
+        ├── kube-prometheus-stack-app.yaml  # Prometheus, Grafana, AlertManager (wave 0)
+        ├── external-secrets-app.yaml       # External Secrets Operator (wave 0)
+        ├── keda-app.yaml                   # KEDA autoscaler (wave 0)
+        ├── platform-app.yaml               # Cluster-wide resources (wave 1)
+        ├── database-app.yaml               # PostgreSQL (wave 2)
+        ├── backend-app.yaml                # Go REST API (wave 2)
+        └── frontend-app.yaml               # React SPA (wave 2)
 ```
 
 ## Applications
 
-| App | Namespace | Sync Wave | Description |
+| App | Namespace | Wave | Source |
 |---|---|---|---|
-| `external-secrets` | `external-secrets` | 0 | External Secrets Operator (v0.14.4) |
-| `external-secrets-config` | `external-secrets` | 1 | ClusterSecretStore and ESO configuration |
-| `taskapp-database` | `default` | 2 | Database deployment |
-| `taskapp-backend` | `default` | 2 | Backend API |
-| `taskapp-frontend` | `default` | 2 | Frontend UI |
+| `kube-prometheus-stack` | `monitoring` | 0 | prometheus-community Helm chart v84.4.0 |
+| `external-secrets` | `external-secrets` | 0 | external-secrets Helm chart v0.14.4 |
+| `keda` | `keda` | 0 | kedacore Helm chart v2.16.1 |
+| `taskapp-platform` | `default` | 1 | `helm-charts/platform` |
+| `taskapp-database` | `default` | 2 | `helm-charts/database` |
+| `taskapp-backend` | `default` | 2 | `helm-charts/backend` |
+| `taskapp-frontend` | `default` | 2 | `helm-charts/frontend` |
 
-Sync waves ensure External Secrets Operator and its configuration are ready before the application components are deployed.
+Wave 0 installs cluster infrastructure (monitoring, secrets, autoscaling). Wave 1 applies cluster-wide resources including the `ClusterSecretStore` and `ExternalSecrets` that wave 2 depends on. Wave 2 deploys the application components.
+
+All apps use `automated` sync with `selfHeal: true` and `prune: true`. `kube-prometheus-stack` and `keda` use `ServerSideApply=true` to avoid annotation size limits on CRDs.
 
 ## Environments
 
-| Environment | Secret Path | Root Manifest |
-|---|---|---|
-| `dev` | `taskapp/dev/database` | `root-dev.yaml` |
-| `prod` | `taskapp/prod/database` | `root-prod.yaml` |
+| Environment | Cluster | Secret Path | Root Manifest |
+|---|---|---|---|
+| `dev` | `kind-dev` | `taskapp/dev/database` | `root-dev.yaml` |
+| `prod` | `kind-prod` | `taskapp/prod/database` | `root-prod.yaml` |
+
+The `destinationServer` for each environment is the Docker internal IP of the kind cluster control plane, registered in ArgoCD during cluster bootstrap.
 
 ## Bootstrap
 
-Apply the root manifest for the target environment to bootstrap the entire stack:
+ArgoCD runs on the management cluster. After bootstrapping (see `bootstrap-cluster/`), apply the root manifest for each environment:
 
 ```bash
-# Dev
-kubectl apply -f root-dev.yaml
-
-# Prod
-kubectl apply -f root-prod.yaml
+kubectl apply -f root-dev.yaml --context kind-management
+kubectl apply -f root-prod.yaml --context kind-management
 ```
 
-ArgoCD will pick up the root `Application` and automatically create all child applications. All apps are configured with `automated` sync, `selfHeal: true`, and `prune: true`.
+ArgoCD creates all child applications automatically and syncs them in wave order.
 
 ## Notifications
 
-Deployment events are sent to the `#deployments` Slack channel via [ArgoCD Notifications](https://argocd-notifications.readthedocs.io/). The following events are subscribed for backend and database apps:
+Deployment events are sent to the `#deployments` Slack channel via ArgoCD Notifications. Subscribed events per app:
 
-- `on-sync-succeeded`
-- `on-sync-failed`
-- `on-smoke-test-failed` (backend only)
+- `on-sync-succeeded` / `on-sync-failed` — backend, frontend, database, platform
+- `on-smoke-test-failed` — backend only (PostSync smoke-test job)
