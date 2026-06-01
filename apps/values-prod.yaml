@@ -12,3 +12,6 @@ backend:
   sqsQueueUrl: "https://sqs.eu-west-1.amazonaws.com/425832464758/taskapp-prod-tasks"
   sqsRegion: eu-west-1
   kedaEnabled: true
+
+crossplane:
+  secretPath: taskapp/prod/crossplane-aws
