@@ -13,6 +13,8 @@ spec:
     repoURL: {{ .Values.repoURL | quote }}
     targetRevision: {{ .Values.targetRevision | quote }}
     path: crossplane-provider-config
+    helm:
+      releaseName: crossplane-provider-config
   destination:
     server: {{ .Values.destinationServer | quote }}
     namespace: crossplane-system
