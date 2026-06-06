@@ -8,7 +8,6 @@ database:
 backend:
   awsCredentialsEnabled: true
   awsCredentialsSecretPath: taskapp/prod/backend-credentials
-  sqsEnabled: true
   sqsQueueUrl: "https://sqs.eu-west-1.amazonaws.com/425832464758/taskapp-prod-tasks"
   sqsRegion: eu-west-1
   kedaEnabled: true

@@ -19,8 +19,6 @@ spec:
       parameters:
         - name: awsCredentials.enabled
           value: {{ .Values.backend.awsCredentialsEnabled | quote }}
-        - name: sqs.enabled
-          value: {{ .Values.backend.sqsEnabled | quote }}
         - name: sqs.queueUrl
           value: {{ .Values.backend.sqsQueueUrl | quote }}
         - name: sqs.region
